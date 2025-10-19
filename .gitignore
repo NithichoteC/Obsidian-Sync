@@ -1,0 +1,45 @@
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# Docker volumes (large data)
+couchdb-data/
+backup/
+
+# Local configuration overrides
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Temporary files
+*.tmp
+*.bak
+tmp/
+temp/
+
+# Secrets and passwords
+secrets/
+credentials/
+*.key
+*.pem
+*.crt
+*.p12
+
+# Personal notes (if you store setup notes)
+notes.md
+TODO.md

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  couchdb:
+    image: couchdb:3.3
+    container_name: obsidian-couchdb
+    restart: unless-stopped
+
+    environment:
+      # Set these in Coolify Environment Variables UI (more secure)
+      # Or create .env file locally (DO NOT commit to GitHub)
+      COUCHDB_USER: ${COUCHDB_USER:-admin}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+
+    ports:
+      - "5984:5984"
+
+    volumes:
+      # Persistent data storage
+      - couchdb-data:/opt/couchdb/data
+      - couchdb-config:/opt/couchdb/etc/local.d
+      - ./couchdb-config/local.ini:/opt/couchdb/etc/local.d/local.ini
+
+    networks:
+      - obsidian-network
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  couchdb-data:
+    driver: local
+  couchdb-config:
+    driver: local
+
+networks:
+  obsidian-network:
+    driver: bridge
