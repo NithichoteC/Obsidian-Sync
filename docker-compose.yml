@@ -12,9 +12,14 @@ services:
       COUCHDB_USER: ${COUCHDB_USER:-admin}
       COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
 
-    # Expose port for Coolify service detection (doesn't expose to host network)
+    # Expose port for Coolify service detection
     expose:
       - "5984"
+
+    # Direct port access (requires firewall protection!)
+    # Configure Hetzner firewall to only allow YOUR IP to access port 5984
+    ports:
+      - "5984:5984"
 
     volumes:
       # Persistent data storage
