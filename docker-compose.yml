@@ -23,22 +23,28 @@ services:
       - ./couchdb-config/local.ini:/opt/couchdb/etc/local.d/local.ini
 
     networks:
-      - obsidian-network
+      - default
 
     labels:
       # Traefik labels for Coolify proxy
       - "traefik.enable=true"
       - "traefik.http.routers.obsidian-couchdb.rule=Host(`obsidian.umbryth.com`)"
       - "traefik.http.routers.obsidian-couchdb.entrypoints=websecure"
+      - "traefik.http.routers.obsidian-couchdb.tls=true"
       - "traefik.http.routers.obsidian-couchdb.tls.certresolver=letsencrypt"
       - "traefik.http.services.obsidian-couchdb.loadbalancer.server.port=5984"
+      # HTTP to HTTPS redirect
+      - "traefik.http.routers.obsidian-couchdb-http.rule=Host(`obsidian.umbryth.com`)"
+      - "traefik.http.routers.obsidian-couchdb-http.entrypoints=web"
+      - "traefik.http.routers.obsidian-couchdb-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 40s
+      start_period: 60s
 
 volumes:
   couchdb-data:
@@ -47,5 +53,6 @@ volumes:
     driver: local
 
 networks:
-  obsidian-network:
-    driver: bridge
+  default:
+    name: coolify
+    external: true
