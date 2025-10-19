@@ -24,6 +24,15 @@ services:
     networks:
       - obsidian-network
 
+    labels:
+      # Coolify labels for domain and proxy configuration
+      - "coolify.managed=true"
+      - "coolify.name=obsidian-couchdb"
+      - "coolify.domains=obsidian.umbryth.com"
+      - "coolify.port=5984"
+      - "coolify.generateHttps=true"
+      - "coolify.forceHttps=true"
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
       interval: 30s
