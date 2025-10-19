@@ -12,8 +12,9 @@ services:
       COUCHDB_USER: ${COUCHDB_USER:-admin}
       COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
 
-    ports:
-      - "5984:5984"
+    # Remove port mapping - Coolify will handle this via Traefik
+    # ports:
+    #   - "5984:5984"
 
     volumes:
       # Persistent data storage
@@ -25,13 +26,12 @@ services:
       - obsidian-network
 
     labels:
-      # Coolify labels for domain and proxy configuration
-      - "coolify.managed=true"
-      - "coolify.name=obsidian-couchdb"
-      - "coolify.domains=obsidian.umbryth.com"
-      - "coolify.port=5984"
-      - "coolify.generateHttps=true"
-      - "coolify.forceHttps=true"
+      # Traefik labels for Coolify proxy
+      - "traefik.enable=true"
+      - "traefik.http.routers.obsidian-couchdb.rule=Host(`obsidian.umbryth.com`)"
+      - "traefik.http.routers.obsidian-couchdb.entrypoints=websecure"
+      - "traefik.http.routers.obsidian-couchdb.tls.certresolver=letsencrypt"
+      - "traefik.http.services.obsidian-couchdb.loadbalancer.server.port=5984"
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984/_up"]
